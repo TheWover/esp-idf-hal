@@ -1,7 +1,8 @@
 use core::time::Duration;
 use esp_idf_sys::*;
 
-#[cfg(not(any(esp32c2, esp32c3)))]
+// esp32c5 and esp32h2 lack RTC GPIO (RTCMode is not defined for them in gpio.rs)
+#[cfg(not(any(esp32c2, esp32c3, esp32h2, esp32c5)))]
 pub use self::rtc::{ChainedRtcWakeupPins, RtcWakeLevel, RtcWakeupPins};
 
 pub mod timer {
@@ -13,7 +14,7 @@ pub mod timer {
     }
 }
 
-#[cfg(not(any(esp32c2, esp32c3)))]
+#[cfg(not(any(esp32c2, esp32c3, esp32h2, esp32c5)))]
 pub mod rtc {
     use crate::gpio::{PinDriver, PinId, RTCMode};
     use esp_idf_sys::*;
@@ -203,7 +204,7 @@ impl LightSleep {
         Ok(self)
     }
 
-    #[cfg(not(any(esp32c2, esp32c3)))]
+    #[cfg(not(any(esp32c2, esp32c3, esp32h2, esp32c5)))]
     pub fn wakeup_on_rtc<P>(self, pins: P, level: rtc::RtcWakeLevel) -> Result<Self, EspError>
     where
         P: rtc::RtcWakeupPins,
@@ -242,7 +243,7 @@ impl DeepSleep {
         Ok(self)
     }
 
-    #[cfg(not(any(esp32c2, esp32c3)))]
+    #[cfg(not(any(esp32c2, esp32c3, esp32h2, esp32c5)))]
     pub fn wakeup_on_rtc<P>(self, pins: P, level: rtc::RtcWakeLevel) -> Result<Self, EspError>
     where
         P: rtc::RtcWakeupPins,
